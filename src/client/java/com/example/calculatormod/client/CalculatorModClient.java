@@ -15,7 +15,6 @@ public class CalculatorModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // キーバインドの登録 (デフォルト: C キー)
         openCalculatorKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.calculatormod.open_calculator",
                 InputUtil.Type.KEYSYM,
@@ -23,7 +22,6 @@ public class CalculatorModClient implements ClientModInitializer {
                 "category.calculatormod.calculator"
         ));
 
-        // 毎tickキーが押されたかチェック
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openCalculatorKey.wasPressed()) {
                 if (client.player != null) {
