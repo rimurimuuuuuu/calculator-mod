@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "calculatormod",
+  "version": "${version}",
+  "name": "Calculator Mod",
+  "description": "Adds an in-game calculator accessible via a keybind (default: C key)",
+  "authors": ["YourName"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.example.calculatormod.CalculatorMod"
+    ],
+    "client": [
+      "com.example.calculatormod.client.CalculatorModClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
