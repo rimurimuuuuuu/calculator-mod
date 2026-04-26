@@ -159,45 +159,11 @@ public class CalculatorScreen extends Screen {
 
         int startX = (this.width - CALC_WIDTH) / 2;
         int startY = (this.height - CALC_HEIGHT) / 2;
+        int centerX = startX + CALC_WIDTH / 2;
 
         context.fill(startX, startY, startX + CALC_WIDTH, startY + CALC_HEIGHT, COLOR_BG);
         context.fill(startX + PADDING, startY + PADDING, startX + CALC_WIDTH - PADDING, startY + DISPLAY_HEIGHT, COLOR_DISPLAY_BG);
 
         if (!expression.isEmpty()) {
-            int exprX = startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5;
-            context.drawText(this.textRenderer, Text.literal(expression), exprX, startY + PADDING + 5, COLOR_EXPR_TEXT, true);
-        }
-
-        String displayStr = displayText.length() > 14 ? displayText.substring(0, 14) : displayText;
-        int dispX = startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5;
-        context.drawText(this.textRenderer, Text.literal(displayStr), dispX, startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
-
-        context.drawText(this.textRenderer, Text.literal("ESC で閉じる"), startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
-
-        super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode >= 48 && keyCode <= 57) { appendDigit(String.valueOf((char) keyCode)); return true; }
-        if (keyCode == 259 || keyCode == 261) { backspace(); return true; }
-        if (keyCode == 257 || keyCode == 335) { calculate(); return true; }
-        if (keyCode == 268) { clearAll(); return true; }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
-        if (chr >= '0' && chr <= '9') { appendDigit(String.valueOf(chr)); return true; }
-        if (chr == '+') { setOperator("+"); return true; }
-        if (chr == '-') { setOperator("-"); return true; }
-        if (chr == '*') { setOperator("*"); return true; }
-        if (chr == '/') { setOperator("/"); return true; }
-        if (chr == '.') { addDecimal(); return true; }
-        if (chr == '=') { calculate(); return true; }
-        return super.charTyped(chr, modifiers);
-    }
-
-    @Override
-    public boolean shouldPause() { return false; }
-}
+            this.textRenderer.draw(expression, 0, 0, COLOR_EXPR_TEXT);
+            context.drawCe
