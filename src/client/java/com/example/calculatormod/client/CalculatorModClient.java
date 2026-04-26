@@ -4,7 +4,6 @@ import com.example.calculatormod.CalculatorMod;
 import com.example.calculatormod.screen.CalculatorScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class CalculatorModClient implements ClientModInitializer {
@@ -17,10 +16,8 @@ public class CalculatorModClient implements ClientModInitializer {
             if (client.player == null) return;
             if (client.currentScreen != null) return;
 
-            boolean isPressed = InputUtil.isKeyPressed(
-                client.getWindow().getHandle(),
-                GLFW.GLFW_KEY_C
-            );
+            long handle = client.getWindow().getHandle();
+            boolean isPressed = GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS;
 
             if (isPressed && !wasPressed) {
                 client.setScreen(new CalculatorScreen());
