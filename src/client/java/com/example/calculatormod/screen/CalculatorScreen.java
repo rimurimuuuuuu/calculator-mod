@@ -164,18 +164,15 @@ public class CalculatorScreen extends Screen {
         context.fill(startX + PADDING, startY + PADDING, startX + CALC_WIDTH - PADDING, startY + DISPLAY_HEIGHT, COLOR_DISPLAY_BG);
 
         if (!expression.isEmpty()) {
-            context.drawText(this.textRenderer, expression,
-                startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5,
-                startY + PADDING + 5, COLOR_EXPR_TEXT, true);
+            int exprX = startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5;
+            context.drawText(this.textRenderer, Text.literal(expression), exprX, startY + PADDING + 5, COLOR_EXPR_TEXT, true);
         }
 
         String displayStr = displayText.length() > 14 ? displayText.substring(0, 14) : displayText;
-        context.drawText(this.textRenderer, displayStr,
-            startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5,
-            startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
+        int dispX = startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5;
+        context.drawText(this.textRenderer, Text.literal(displayStr), dispX, startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
 
-        context.drawText(this.textRenderer, "ESC で閉じる",
-            startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
+        context.drawText(this.textRenderer, Text.literal("ESC で閉じる"), startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
 
         super.render(context, mouseX, mouseY, delta);
     }
