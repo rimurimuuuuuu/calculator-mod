@@ -15,12 +15,14 @@ public class CalculatorModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        openCalculatorKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        openCalculatorKey = KeyBindingHelper.registerKeyBinding(
+            new KeyBinding(
                 "key.calculatormod.open_calculator",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_C,
                 "category.calculatormod.calculator"
-        ));
+            )
+        );
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openCalculatorKey.wasPressed()) {
@@ -30,6 +32,6 @@ public class CalculatorModClient implements ClientModInitializer {
             }
         });
 
-        CalculatorMod.LOGGER.info("Calculator Mod client initialized!");
+        CalculatorMod.LOGGER.info("Calculator Mod initialized!");
     }
 }
