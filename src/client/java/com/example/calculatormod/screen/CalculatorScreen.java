@@ -4,8 +4,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CalculatorScreen extends Screen {
 
@@ -38,24 +36,23 @@ public class CalculatorScreen extends Screen {
         int startY = (this.height - CALC_HEIGHT) / 2;
 
         String[][] buttons = {
-                {"C", "±", "%", "÷"},
-                {"7", "8", "9", "×"},
-                {"4", "5", "6", "−"},
-                {"1", "2", "3", "+"},
-                {"0", ".", "⌫", "="}
+            {"C", "±", "%", "÷"},
+            {"7", "8", "9", "×"},
+            {"4", "5", "6", "−"},
+            {"1", "2", "3", "+"},
+            {"0", ".", "⌫", "="}
         };
 
         int btnY = startY + DISPLAY_HEIGHT + PADDING * 2;
 
         for (int row = 0; row < buttons.length; row++) {
             for (int col = 0; col < buttons[row].length; col++) {
-                String label = buttons[row][col];
+                final String label = buttons[row][col];
                 int btnX = startX + PADDING + col * (BUTTON_SIZE + BUTTON_GAP);
                 int currentBtnY = btnY + row * (BUTTON_SIZE + BUTTON_GAP);
-                final String btnLabel = label;
                 this.addDrawableChild(ButtonWidget.builder(
-                        Text.literal(label),
-                        btn -> handleButtonPress(btnLabel)
+                    Text.literal(label),
+                    btn -> handleButtonPress(label)
                 ).dimensions(btnX, currentBtnY, BUTTON_SIZE, BUTTON_SIZE).build());
             }
         }
@@ -78,12 +75,8 @@ public class CalculatorScreen extends Screen {
     }
 
     private void clearAll() {
-        displayText = "0";
-        expression = "";
-        firstOperand = 0;
-        pendingOperator = "";
-        startNewNumber = true;
-        hasDecimal = false;
+        displayText = "0"; expression = ""; firstOperand = 0;
+        pendingOperator = ""; startNewNumber = true; hasDecimal = false;
     }
 
     private void backspace() {
@@ -91,23 +84,18 @@ public class CalculatorScreen extends Screen {
             if (displayText.endsWith(".")) hasDecimal = false;
             displayText = displayText.substring(0, displayText.length() - 1);
         } else {
-            displayText = "0";
-            startNewNumber = true;
-            hasDecimal = false;
+            displayText = "0"; startNewNumber = true; hasDecimal = false;
         }
     }
 
     private void toggleSign() {
-        if (!displayText.equals("0")) {
+        if (!displayText.equals("0"))
             displayText = displayText.startsWith("-") ? displayText.substring(1) : "-" + displayText;
-        }
     }
 
     private void percentage() {
-        try {
-            double value = Double.parseDouble(displayText) / 100.0;
-            displayText = formatResult(value);
-        } catch (NumberFormatException ignored) {}
+        try { displayText = formatResult(Double.parseDouble(displayText) / 100.0); }
+        catch (NumberFormatException ignored) {}
     }
 
     private void setOperator(String op) {
@@ -116,17 +104,13 @@ public class CalculatorScreen extends Screen {
             firstOperand = Double.parseDouble(displayText);
             pendingOperator = op;
             expression = formatResult(firstOperand) + " " + opToSymbol(op);
-            startNewNumber = true;
-            hasDecimal = false;
+            startNewNumber = true; hasDecimal = false;
         } catch (NumberFormatException ignored) {}
     }
 
     private String opToSymbol(String op) {
         return switch (op) {
-            case "/" -> "÷";
-            case "*" -> "×";
-            case "-" -> "−";
-            default -> op;
+            case "/" -> "÷"; case "*" -> "×"; case "-" -> "−"; default -> op;
         };
     }
 
@@ -134,42 +118,33 @@ public class CalculatorScreen extends Screen {
         if (pendingOperator.isEmpty()) return;
         try {
             double second = Double.parseDouble(displayText);
-            double result = switch (pendingOperator) {
+            double result;
+            if (pendingOperator.equals("/") && second == 0) {
+                displayText = "エラー"; expression = ""; pendingOperator = ""; startNewNumber = true; return;
+            }
+            result = switch (pendingOperator) {
                 case "+" -> firstOperand + second;
                 case "-" -> firstOperand - second;
                 case "*" -> firstOperand * second;
-                case "/" -> {
-                    if (second == 0) { displayText = "エラー"; expression = ""; pendingOperator = ""; startNewNumber = true; yield Double.NaN; }
-                    yield firstOperand / second;
-                }
+                case "/" -> firstOperand / second;
                 default -> second;
             };
-            if (!Double.isNaN(result)) {
-                displayText = formatResult(result);
-                expression = "";
-                pendingOperator = "";
-                firstOperand = result;
-                startNewNumber = true;
-                hasDecimal = displayText.contains(".");
-            }
+            displayText = formatResult(result);
+            expression = ""; pendingOperator = ""; firstOperand = result;
+            startNewNumber = true; hasDecimal = displayText.contains(".");
         } catch (NumberFormatException ignored) {}
     }
 
     private void addDecimal() {
         if (!hasDecimal) {
             displayText = startNewNumber ? "0." : displayText + ".";
-            startNewNumber = false;
-            hasDecimal = true;
+            startNewNumber = false; hasDecimal = true;
         }
     }
 
     private void appendDigit(String digit) {
-        if (startNewNumber) {
-            displayText = digit;
-            startNewNumber = false;
-        } else {
-            displayText = displayText.equals("0") ? digit : (displayText.length() < 12 ? displayText + digit : displayText);
-        }
+        if (startNewNumber) { displayText = digit; startNewNumber = false; }
+        else displayText = displayText.equals("0") ? digit : (displayText.length() < 12 ? displayText + digit : displayText);
     }
 
     private String formatResult(double value) {
@@ -178,7 +153,7 @@ public class CalculatorScreen extends Screen {
         return String.format("%.8f", value).replaceAll("0+$", "").replaceAll("\\.$", "");
     }
 
-   @Override
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context, mouseX, mouseY, delta);
 
@@ -188,49 +163,42 @@ public class CalculatorScreen extends Screen {
         context.fill(startX, startY, startX + CALC_WIDTH, startY + CALC_HEIGHT, COLOR_BG);
         context.fill(startX + PADDING, startY + PADDING, startX + CALC_WIDTH - PADDING, startY + DISPLAY_HEIGHT, COLOR_DISPLAY_BG);
 
-        // 式の表示
         if (!expression.isEmpty()) {
             context.drawText(this.textRenderer, expression,
-                    startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5,
-                    startY + PADDING + 5, COLOR_EXPR_TEXT, true);
+                startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5,
+                startY + PADDING + 5, COLOR_EXPR_TEXT, true);
         }
 
-        // メイン数字表示
         String displayStr = displayText.length() > 14 ? displayText.substring(0, 14) : displayText;
         context.drawText(this.textRenderer, displayStr,
-                startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5,
-                startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
+            startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5,
+            startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
 
-        // ESCで閉じる
         context.drawText(this.textRenderer, "ESC で閉じる",
-                startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
+            startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
 
         super.render(context, mouseX, mouseY, delta);
-    }}
+    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode >= 48 && keyCode <= 57) { appendDigit(String.valueOf((char) keyCode)); return true; }
-        return switch (keyCode) {
-            case 259, 261 -> { backspace(); yield true; }
-            case 257, 335 -> { calculate(); yield true; }
-            case 268 -> { clearAll(); yield true; }
-            default -> super.keyPressed(keyCode, scanCode, modifiers);
-        };
+        if (keyCode == 259 || keyCode == 261) { backspace(); return true; }
+        if (keyCode == 257 || keyCode == 335) { calculate(); return true; }
+        if (keyCode == 268) { clearAll(); return true; }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
     public boolean charTyped(char chr, int modifiers) {
         if (chr >= '0' && chr <= '9') { appendDigit(String.valueOf(chr)); return true; }
-        return switch (chr) {
-            case '+' -> { setOperator("+"); yield true; }
-            case '-' -> { setOperator("-"); yield true; }
-            case '*' -> { setOperator("*"); yield true; }
-            case '/' -> { setOperator("/"); yield true; }
-            case '.' -> { addDecimal(); yield true; }
-            case '=' -> { calculate(); yield true; }
-            default -> super.charTyped(chr, modifiers);
-        };
+        if (chr == '+') { setOperator("+"); return true; }
+        if (chr == '-') { setOperator("-"); return true; }
+        if (chr == '*') { setOperator("*"); return true; }
+        if (chr == '/') { setOperator("/"); return true; }
+        if (chr == '.') { addDecimal(); return true; }
+        if (chr == '=') { calculate(); return true; }
+        return super.charTyped(chr, modifiers);
     }
 
     @Override
