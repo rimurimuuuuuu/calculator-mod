@@ -178,7 +178,7 @@ public class CalculatorScreen extends Screen {
         return String.format("%.8f", value).replaceAll("0+$", "").replaceAll("\\.$", "");
     }
 
-    @Override
+   @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context, mouseX, mouseY, delta);
 
@@ -190,23 +190,23 @@ public class CalculatorScreen extends Screen {
 
         // 式の表示
         if (!expression.isEmpty()) {
-            context.drawText(this.textRenderer, Text.literal(expression),
+            context.drawText(this.textRenderer, expression,
                     startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(expression) - 5,
                     startY + PADDING + 5, COLOR_EXPR_TEXT, true);
         }
 
         // メイン数字表示
         String displayStr = displayText.length() > 14 ? displayText.substring(0, 14) : displayText;
-        context.drawText(this.textRenderer, Text.literal(displayStr),
+        context.drawText(this.textRenderer, displayStr,
                 startX + CALC_WIDTH - PADDING - this.textRenderer.getWidth(displayStr) - 5,
                 startY + DISPLAY_HEIGHT - 18, COLOR_TEXT, true);
 
         // ESCで閉じる
-        context.drawText(this.textRenderer, Text.literal("ESC で閉じる"),
+        context.drawText(this.textRenderer, "ESC で閉じる",
                 startX + PADDING + 5, startY + CALC_HEIGHT - 12, 0xFF475569, false);
 
         super.render(context, mouseX, mouseY, delta);
-    }
+    }}
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
