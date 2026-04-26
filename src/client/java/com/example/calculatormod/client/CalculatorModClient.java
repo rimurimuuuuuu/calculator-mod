@@ -19,16 +19,21 @@ public class CalculatorModClient implements ClientModInitializer {
             new KeyBinding(
                 "key.calculatormod.open_calculator",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_C,
+                GLFW.GLFW_KEY_UNKNOWN,
                 "category.calculatormod.calculator"
             )
         );
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null) return;
+            if (client.currentScreen != null) return;
+            if (InputUtil.isKeyPressed(
+                    client.getWindow().getHandle(),
+                    GLFW.GLFW_KEY_C)) {
+                // Cキーが押されたらチャット入力中でなければ開く
+            }
             while (openCalculatorKey.wasPressed()) {
-                if (client.player != null) {
-                    client.setScreen(new CalculatorScreen());
-                }
+                client.setScreen(new CalculatorScreen());
             }
         });
 
